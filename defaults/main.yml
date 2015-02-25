@@ -1,0 +1,25 @@
+squirrel_enabled: yes                       # Enable module
+
+#user: 'albandri' #please override me
+user: "{{ lookup('env','USER') }}"
+squirrel_owner: "{{ user }}"
+squirrel_group: "{{ squirrel_owner }}"
+#home: '~' #please override me
+home: "{{ lookup('env','HOME') }}"
+squirrel_owner_home: "{{ home }}"
+squirrel_base_dir: "/usr/local/{{squirrel_archive_extracted}}"
+squirrel_link_base_dir: "/opt"
+squirrel_dir_tmp: "/tmp" # or override with "{{ tempdir.stdout }} in order to have be sure to download the file"
+
+## Most likely you dont need to edit
+#todo squirrel_service_enabled   : 'yes'
+squirrel_major: "3.6"
+squirrel_minor: "0"
+squirrel_version: "{{squirrel_major}}.{{squirrel_minor}}"
+squirrel_name: "squirrel"
+squirrel_archive_extracted: "{{ squirrel_name }}-sql-{{ squirrel_major }}"
+#http://downloads.sourceforge.net/project/{{ squirrel_name }}-sql/1-stable/{{ squirrel_version }}/squirrel-sql-{{ squirrel_major }}-standard.jar?r=http%3A%2F%2Fwww.squirrelsql.org%2F&ts=1424876345&use_mirror=heanet
+squirrel_archive: "{{ squirrel_archive_extracted }}-standard.jar"
+
+squirrel_url: "http://downloads.sourceforge.net/project/{{ squirrel_name }}-sql/1-stable/{{ squirrel_version }}/{{ squirrel_archive_extracted }}-standard.jar?r=http%3A%2F%2Fwww.squirrelsql.org%2F&ts=1424876345&use_mirror=heanet"
+squirrel_home_dir: "{{squirrel_base_dir}}/{{squirrel_name}}-{{squirrel_major}}"

@@ -1,0 +1,106 @@
+---
+# This playbook contains common plays to install squirrel.
+
+- name: squirrel | Check user exists
+  user: name={{squirrel_owner}} state=present
+
+- name: squirrel | Check user home directory
+  stat: path={{squirrel_owner_home}}
+  register: home_present
+
+- debug: msg=" squirrel | Path exists and is a directory"
+  when: home_present.stat.isdir is defined and home_present.stat.isdir == true
+
+- name: squirrel | Create temporary directory
+  shell: mktemp -d
+  register: tempdir
+  tags: squirrel_setup
+
+- name: squirrel | Download squirrel
+  get_url:
+    url="{{squirrel_url}}"
+    dest="{{ squirrel_dir_tmp }}/{{squirrel_archive}}"
+  register: squirrel_download
+  tags: squirrel_setup
+
+- name: squirrel | Create base directory
+  file:
+    dest="{{squirrel_base_dir}}/{{squirrel_name}}-installer"
+    state=directory
+    owner="{{squirrel_owner}}"
+    group="{{squirrel_group}}"
+  sudo : yes
+  when: squirrel_download.changed
+  tags: squirrel_setup
+
+#- name: squirrel | Install zip
+#  apt:
+#    pkg=zip
+#    state="present"
+#  tags: squirrel_setup
+#
+#- name: squirrel | Extract archive squirrel
+#  command: chdir={{ squirrel_base_dir }}/{{squirrel_name}}-installer /usr/bin/unzip -o -q {{ squirrel_dir_tmp }}/{{ squirrel_archive }}
+#  when: squirrel_download.changed
+
+
+- name: squirrel | Copy archive
+  copy: src={{ squirrel_dir_tmp }}/{{ squirrel_archive }} dest={{ squirrel_base_dir }}/{{squirrel_name}}-installer mode=755
+  when: squirrel_download.changed
+
+- name: squirrel | Configure installer
+  template: src=install.xml.j2 dest={{ squirrel_base_dir }}/{{squirrel_name}}-installer/install.xml
+  when: squirrel_download.changed
+
+- name: squirrel | Launch installer
+  shell: java -jar {{ squirrel_base_dir }}/{{squirrel_name}}-installer/{{ squirrel_archive }} -f {{ squirrel_base_dir }}/{{squirrel_name}}-installer/install.xml
+  sudo: yes
+  when: squirrel_download.changed
+
+- name: squirrel | Change archive squirrel ownership
+  file: path={{squirrel_base_dir}}/{{squirrel_name}}-installer owner={{squirrel_owner}} state=directory recurse=yes
+  when: squirrel_download.changed
+
+- name: squirrel | Stat {{squirrel_base_dir}}//{{squirrel_name}}-installer
+  stat: path={{squirrel_base_dir}}//{{squirrel_name}}-installer
+  register: squirrel_archive_extracted_present
+
+- debug: msg=" squirrel | Path exists and is a directory"
+  when: squirrel_archive_extracted_present.stat.isdir is defined and squirrel_archive_extracted_present.stat.isdir == true
+
+- fail: msg=" squirrel | Whoops! file ownership has changed"
+  when: squirrel_archive_extracted_present.stat.pw_name != '{{squirrel_owner}}'
+
+- name: squirrel | Create a link to squirrel (1)
+  file:
+    src="{{squirrel_base_dir}}/{{squirrel_archive_extracted}}"
+    dest="{{squirrel_base_dir}}/{squirrel_name}}"
+    state=link
+    owner="{{squirrel_owner}}"
+#    group="{{squirrel_group}}"
+  tags: squirrel_setup
+
+- name: squirrel | Create a link to squirrel (2)
+  file:
+    src="{{squirrel_base_dir}}/{{squirrel_archive_extracted}}"
+    dest="{{squirrel_link_base_dir}}/{{squirrel_name}}"
+    state=link
+    owner="{{squirrel_owner}}"
+#    group="{{squirrel_group}}"
+  sudo: yes
+  tags: squirrel_setup
+
+#- name: squirrel | Configure squirrel icon
+#  template: src=squirrel.desktop.j2 dest={{ squirrel_owner_home }}/.local/share/applications/sublime_text.desktop
+#  when: (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
+#  ignore_errors: yes
+#  tags: squirrel_setup
+
+#TODO
+#sudo update-desktop-database
+
+- name: squirrel | Cleanup temporary directory
+  file: name={{ tempdir.stdout }} state=absent
+  tags: squirrel_setup
+
+- debug: msg=" squirrel | Start squirrel {{squirrel_base_dir}}/{{squirrel_archive_extracted}}/squirrel-sql.sh"

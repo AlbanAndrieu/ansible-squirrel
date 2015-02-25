@@ -1,0 +1,30 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version={{ squirrel_major }}
+Name=Sublime text {{ squirrel_version }}
+GenericName=Text Editor
+
+Path={{ squirrel_base_dir }}/squirrel-{{ squirrel_major }}
+Exec={{ squirrel_base_dir }}/squirrel-{{ squirrel_major }}/sublime_text
+Terminal=false
+#Icon=/usr/lib/squirrel/icon.xpm
+#** something like /opt/squirrel/icon.xpm **
+#Icon={{ squirrel_base_dir }}/squirrel-{{ squirrel_major }}/Icon/48x48/sublime_text.png
+Icon=sublime_text.png
+Type=Application
+Categories=IDE;Development
+Comment=Integrated Development Environment
+NoDisplay=false
+StartupNotify=false
+StartupWMClass=Sublime_text
+OnlyShowIn=Unity;
+X-UnityGenerated=true
+
+X-Ayatana-Desktop-Shortcuts=NewWindow
+
+[NewWindow Shortcut Group]
+Name=New Window
+#Exec=squirrel -n
+# ** something like /opt/squirrel/squirrel **
+Exec={{ squirrel_base_dir }}/squirrel-{{ squirrel_major }}/sublime_text
+TargetEnvironment=Unity

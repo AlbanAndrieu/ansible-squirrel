@@ -1,0 +1,59 @@
+---
+dependencies: []
+#dependencies:
+  #- { role: alban.andrieu.common }
+  # List your role dependencies here, one per line. Only
+  # dependencies available via galaxy should be listed here.
+  # Be sure to remove the '[]' above if you add dependencies
+  # to this list.
+
+galaxy_info:
+  author: Alban Andrieu
+  description: A role for installing squirrel
+  company: Nabla
+  license: GPLv3
+  min_ansible_version: 1.6.3
+  platforms:
+  - name: Ubuntu
+    versions:
+    - all
+    - lucid
+    - maverick
+    - natty
+    - oneiric
+    - precise
+    - quantal
+    - raring
+    - saucy
+    - trusty
+  categories:
+  - development
+
+ansigenome_info:
+  galaxy_id: '0000'
+  galaxy_user: 'alban.andrieu'
+  galaxy_name: 'squirrel'
+
+  travis: True
+
+  authors:
+    - name:  'Alban Andrieu'
+      url: 'fr.linkedin.com/in/nabla/'
+      email: 'alban.andrieu@free.fr'
+      twitter: 'AlbanAndrieu'
+      github: 'AlbanAndrieu'
+
+  synopsis: |
+    Ensures that squirrel is properly installed and configured on `Ubuntu` using `Ansible` script.
+    This ``Simple`` role allows you to install [squirrel](http://www.squirrel.com/).
+
+    Taken from
+    ------------------
+
+    http://www.squirrel.com/downloads/
+
+  usage: |
+    Describe how to use in more detail...
+
+  #custom: |
+  #  Any custom output you want after the usage section..
