@@ -58,11 +58,12 @@
   when: squirrel_download.changed
 
 - name: squirrel | Change archive squirrel ownership
-  file: path={{squirrel_base_dir}}/{{squirrel_name}}-installer owner={{squirrel_owner}} state=directory recurse=yes
+  file: path={{squirrel_base_dir}} owner={{squirrel_owner}} state=directory recurse=yes
+  sudo: yes
   when: squirrel_download.changed
 
-- name: squirrel | Stat {{squirrel_base_dir}}//{{squirrel_name}}-installer
-  stat: path={{squirrel_base_dir}}//{{squirrel_name}}-installer
+- name: squirrel | Stat {{squirrel_base_dir}}/
+  stat: path={{squirrel_base_dir}}/
   register: squirrel_archive_extracted_present
 
 - debug: msg=" squirrel | Path exists and is a directory"
@@ -73,16 +74,17 @@
 
 - name: squirrel | Create a link to squirrel (1)
   file:
-    src="{{squirrel_base_dir}}/{{squirrel_archive_extracted}}"
-    dest="{{squirrel_base_dir}}/{squirrel_name}}"
+    src="{{squirrel_base_dir}}"
+    dest="{{squirrel_root_dir}}/{{squirrel_name}}"
     state=link
     owner="{{squirrel_owner}}"
 #    group="{{squirrel_group}}"
+  sudo: yes
   tags: squirrel_setup
 
 - name: squirrel | Create a link to squirrel (2)
   file:
-    src="{{squirrel_base_dir}}/{{squirrel_archive_extracted}}"
+    src="{{squirrel_base_dir}}"
     dest="{{squirrel_link_base_dir}}/{{squirrel_name}}"
     state=link
     owner="{{squirrel_owner}}"
@@ -103,4 +105,4 @@
   file: name={{ tempdir.stdout }} state=absent
   tags: squirrel_setup
 
-- debug: msg=" squirrel | Start squirrel {{squirrel_base_dir}}/{{squirrel_archive_extracted}}/squirrel-sql.sh"
+- debug: msg=" squirrel | Start squirrel {{squirrel_base_dir}}/squirrel-sql.sh"

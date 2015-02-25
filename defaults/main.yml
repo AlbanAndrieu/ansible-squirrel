@@ -7,7 +7,8 @@ squirrel_group: "{{ squirrel_owner }}"
 #home: '~' #please override me
 home: "{{ lookup('env','HOME') }}"
 squirrel_owner_home: "{{ home }}"
-squirrel_base_dir: "/usr/local/{{squirrel_archive_extracted}}"
+squirrel_root_dir: "/usr/local"
+squirrel_base_dir: "{{ squirrel_root_dir }}/{{squirrel_archive_extracted}}"
 squirrel_link_base_dir: "/opt"
 squirrel_dir_tmp: "/tmp" # or override with "{{ tempdir.stdout }} in order to have be sure to download the file"
 
