@@ -104,5 +104,7 @@
 - name: squirrel | Cleanup temporary directory
   file: name={{ tempdir.stdout }} state=absent
   tags: squirrel_setup
-
+  changed_when: false    
+  ignore_errors: "{{ ansible_check_mode }}"  
+  
 - debug: msg=" squirrel | Start squirrel {{squirrel_base_dir}}/squirrel-sql.sh"
